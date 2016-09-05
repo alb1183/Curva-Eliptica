@@ -1,0 +1,182 @@
+void setup() {
+  size(720, 720);
+  
+}
+
+int centro[] = {360, 360};
+int margin = 30;
+int curva = 7;
+int puntos_x[] = {-1, 0};
+
+void draw() {
+  background(218, 218, 218);
+  
+  // Dibujo la cuadricula
+  stroke(170, 170, 170);
+  line(centro[0], centro[1], 690, centro[1]);
+  line(centro[0], centro[1], 30, centro[1]);
+  line(centro[0], centro[1], centro[0], 690);
+  line(centro[0], centro[1], centro[0], 30);
+  int linea_long = 2;
+  int limit = floor(330.0/margin);
+  for(int x = -limit; x <= limit; x++) {
+    int step = margin * x;
+    line(centro[0]+step, centro[1]+linea_long, centro[0]+step, centro[1]-linea_long);
+    line(centro[0]+linea_long, centro[1]+step, centro[0]-linea_long, centro[1]+step);
+  }
+  
+  // Dibujo la curva
+  stroke(230, 60, 60);
+  for(int x = -5500; x <= 5500; x++) {
+      float x_t = x/500.0;
+      // Curvas
+      float y_t = curvas(curva, x_t);
+      point(centro[0]+(x_t*margin), centro[1]+(y_t*margin)); // Solucion positiva
+      point(centro[0]+(x_t*margin), centro[1]+(y_t*margin*(-1))); // Solucion negativa
+      //println(x+" "+x_t + " " + y_t);
+  }
+  
+  // Puntos en la curva
+  // Mouse
+  float x_mouse = float(mouseX-centro[0]) / float(margin);
+  float x_mouse_c = curvas(curva, x_mouse);
+  noStroke();
+  if(!Float.isNaN(x_mouse_c)) {
+     fill(120, 120, 255);
+     ellipse(centro[0]+x_mouse*margin, centro[1]-x_mouse_c*margin, 5, 5);
+     //ellipse(centro[0]+x_mouse*margin, centro[1]+x_mouse_c*margin, 5, 5);
+  }
+  // Punto_1
+  float punto_1 = float(puntos_x[0]) / float(margin);
+  float punto_1_c = curvas(curva, punto_1);
+  if(!Float.isNaN(punto_1_c)) {
+     fill(255, 0, 170);
+     ellipse(centro[0]+punto_1*margin, centro[1]-punto_1_c*margin, 5, 5);
+     //ellipse(centro[0]+punto_1*margin, centro[1]+punto_1_c*margin, 5, 5);
+  }else{
+     fill(255, 0, 170);
+     ellipse(centro[0]+punto_1*margin, centro[1], 5, 5);
+  }
+  
+  // Suma
+  float suma_x = 0;
+  float suma_y_c = 0;
+  if(!Float.isNaN(punto_1_c) && !Float.isNaN(x_mouse_c)) {
+     stroke(0, 255, 140);
+     line(centro[0]+x_mouse*margin, centro[1]-x_mouse_c*margin, centro[0]+punto_1*margin, centro[1]-punto_1_c*margin);
+    
+     float lamda = (x_mouse_c-punto_1_c) / (x_mouse-punto_1);
+     suma_x = lamda*lamda - x_mouse-punto_1;
+     suma_y_c = curvas(curva, suma_x);
+     stroke(255, 160, 0);
+     line(centro[0]+punto_1*margin, centro[1]-punto_1_c*margin, centro[0]+suma_x*margin, centro[1]-suma_y_c*margin);
+     noStroke();
+     fill(120, 0, 255);
+     ellipse(centro[0]+suma_x*margin, centro[1]-suma_y_c*margin, 5, 5);
+     // Simetrico
+     stroke(0, 255, 255);
+     line(centro[0]+suma_x*margin, centro[1]-suma_y_c*margin,centro[0]+suma_x*margin, centro[1]+suma_y_c*margin);
+     noStroke();
+     fill(250, 230, 0);
+     ellipse(centro[0]+suma_x*margin, centro[1]+suma_y_c*margin, 5, 5);
+     
+  }
+  
+  
+  // Controles
+  if (mousePressed) {
+    if (mouseButton == LEFT) {
+      margin += 2;
+    } else if (mouseButton == RIGHT) {
+      margin = (margin > 4) ? margin-2 : 4;
+    }
+  }
+   if (keyPressed) {
+    switch (key) {
+    case '1': 
+      curva = 1;
+      break;
+    case '2': 
+      curva = 2;
+      break;
+    case '3': 
+      curva = 3;
+      break;
+    case '4': 
+      curva = 4;
+      break;
+    case '5': 
+      curva = 5;
+      break;
+    case '6': 
+      curva = 6;
+      break;
+    case '7': 
+      curva = 7;
+      break;
+    case 'a': 
+      puntos_x[0]--;
+      break;
+    case 'd': 
+      puntos_x[0]++;
+      break;
+    case 'r': 
+      margin = 30;
+      centro[0] = 360;
+      centro[1] = 360;
+      break;
+    }
+    
+    
+    switch (keyCode) {
+    case UP:
+      centro[1] += 4;
+      break; 
+    case RIGHT:
+      centro[0] -= 4;
+      break; 
+    case LEFT:
+      centro[0] += 4;
+      break; 
+    case DOWN:
+      centro[1] -= 4;
+      break;
+    }
+   }
+   
+   // Texto
+  fill(255, 255, 255);
+  textSize(16);
+  text("Curva: " + curva, 5, 20);
+  text("P: (" + nf(x_mouse, 0, 2) + "," + nf(x_mouse_c, 0, 2) + ")", 5, 40);
+  text("Q: (" + nf(punto_1, 0, 2) + "," + nf(punto_1_c, 0, 2) + ")", 5, 60);
+  text("P+Q: (" + nf(suma_x, 0, 2) + "," + nf(suma_y_c, 0, 2) + ")", 5, 80);
+}
+
+float curvas(int curva, float x) {
+  float retorno = 0;
+  switch (curva) {
+    case 1: 
+      retorno = sqrt(x*x*x-1);
+      break;
+    case 2: 
+      retorno = sqrt(x*x*x+1);
+      break;
+    case 3: 
+      retorno = sqrt(x*x*x-x+1);
+      break;
+    case 4: 
+      retorno = sqrt(x*x*x-3*x+3);
+      break;
+    case 5: 
+      retorno = sqrt(x*x*x-4*x);
+      break;
+    case 6: 
+      retorno = sqrt(x*x*x-x);
+      break;
+    case 7: 
+      retorno = sqrt(x*x*x-13*x-12);
+      break;
+  }
+  return retorno;
+}
