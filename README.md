@@ -1,6 +1,6 @@
 # Curva-Eliptica
-Por Alberto Robles Enciso
-  Primero de ing.informatica (23/08/2016)  
+  Por Alberto Robles Enciso  
+  Primero de ing.informatica (23/08/2016) 
   Programado en Processing 3 (processing.org)
   
   Visualizador grafico de curvas elipticas.  
