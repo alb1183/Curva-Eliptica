@@ -24,5 +24,4 @@
   El coefieciente de grado 1 se modifica con 
   las teclas E/D  
   El coefieciente de grado 0 se modifica con 
-  las teclas R/F  
-  
+  las teclas R/F
