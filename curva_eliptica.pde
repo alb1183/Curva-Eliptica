@@ -7,6 +7,7 @@ int centro[] = {360, 360};
 int margin = 30;
 int curva = 7;
 int puntos_x[] = {-1, 0};
+int coeficientes[] = {12, 4, 0, 1};
 
 void draw() {
   background(218, 218, 218);
@@ -93,6 +94,9 @@ void draw() {
   }
    if (keyPressed) {
     switch (key) {
+    case '0': 
+      curva = 0;
+      break;
     case '1': 
       curva = 1;
       break;
@@ -114,16 +118,44 @@ void draw() {
     case '7': 
       curva = 7;
       break;
-    case 'a': 
+    case 'z': 
       puntos_x[0]--;
       break;
-    case 'd': 
+    case 'c': 
       puntos_x[0]++;
       break;
+    case 'q': 
+      coeficientes[3]++;
+      break;
+    case 'a': 
+      coeficientes[3]--;
+      break;
+    case 'w': 
+      coeficientes[2]++;
+      break;
+    case 's': 
+      coeficientes[2]--;
+      break;
+    case 'e': 
+      coeficientes[1]++;
+      break;
+    case 'd': 
+      coeficientes[1]--;
+      break;
     case 'r': 
+      coeficientes[0]++;
+      break;
+    case 'f': 
+      coeficientes[0]--;
+      break;
+    case 'x': 
       margin = 30;
       centro[0] = 360;
       centro[1] = 360;
+      coeficientes[0] = 12;
+      coeficientes[1] = 4;
+      coeficientes[2] = 0;
+      coeficientes[3] = 1;
       break;
     }
     
@@ -147,7 +179,10 @@ void draw() {
    // Texto
   fill(255, 255, 255);
   textSize(16);
-  text("Curva: " + curva, 5, 20);
+  if(curva != 0)
+    text("Curva: " + curva, 5, 20);
+  else
+    text("Curva: " +  coeficientes[3] + "X^3 + (" +  coeficientes[2] + "X^2) + (" +  coeficientes[1] + "X) + (" +  coeficientes[0] + ")", 5, 20);
   text("P: (" + nf(x_mouse, 0, 2) + "," + nf(x_mouse_c, 0, 2) + ")", 5, 40);
   text("Q: (" + nf(punto_1, 0, 2) + "," + nf(punto_1_c, 0, 2) + ")", 5, 60);
   text("P+Q: (" + nf(suma_x, 0, 2) + "," + nf(suma_y_c, 0, 2) + ")", 5, 80);
@@ -156,6 +191,9 @@ void draw() {
 float curvas(int curva, float x) {
   float retorno = 0;
   switch (curva) {
+    case 0: 
+      retorno = sqrt(coeficientes[3]*x*x*x + coeficientes[2]*x*x + coeficientes[1]*x + coeficientes[0]);
+      break;
     case 1: 
       retorno = sqrt(x*x*x-1);
       break;
